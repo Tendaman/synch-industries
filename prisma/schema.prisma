@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(cuid())
+  name     String?
+  surname  String?
+  email    String  @unique
+  isVerified        Boolean @default(false)
+  verificationToken String? @unique
+
+  genCodes UserGenCode[]
+}
+
+model GenCode {
+  id          String   @id @default(cuid())
+  generatedCode Int     @unique
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime @default(dbgenerated("(NOW() + INTERVAL '1 DAY')"))
+
+  linkedUsers UserGenCode[]
+}
+
+model UserGenCode {
+  id       String @id @default(cuid())
+  userEmail String @unique
+  genCodeId String
+
+  user   User   @relation(fields: [userEmail], references: [email])
+  gencode GenCode @relation(fields: [genCodeId], references: [id])
+}
