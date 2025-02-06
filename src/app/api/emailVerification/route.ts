@@ -30,7 +30,7 @@ export async function GET(req: Request) {
     // Mark user as verified
     await prisma.user.update({
       where: { email: user.email },
-      data: { isVerified: true, verificationToken: null },
+      data: { isVerified: true},
     });
 
     const redirectUrl =`${process.env.NEXT_PUBLIC_URL}/codepage/gen-code?email=${user.email}`;
