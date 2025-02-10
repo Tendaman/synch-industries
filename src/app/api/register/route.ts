@@ -31,23 +31,45 @@ export async function POST(req: Request) {
 
     await sendVerificationEmail(email, verificationToken);
 
-    // Generate a random 4-digit code
-    const generatedCode = Math.floor(1000 + Math.random() * 9000);
+    const availableCodes = await prisma.genCode.findMany({
+      where: { isAssigned: false },
+    });
 
-    // Store the generated code and link it to the user
-    const genCode = await prisma.genCode.create({
+    if (availableCodes.length === 0) {
+      return NextResponse.json({ message: "No available codes at the moment." }, { status: 500 });
+    }
+
+    // Select a random code
+    const randomIndex = Math.floor(Math.random() * availableCodes.length);
+    const selectedCode = availableCodes[randomIndex];
+
+    // Mark the code as assigned
+    await prisma.genCode.update({
+      where: { id: selectedCode.id },
+      data: { isAssigned: true },
+    });
+
+    // Save the assigned code in UserGenCode table
+    await prisma.userGenCode.create({
       data: {
-        generatedCode,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // Expires in 1 day
-        linkedUsers: {
-          create: {
-            userEmail: user.email,
-          },
-        },
+        userEmail: user.email,
+        genCodeId: selectedCode.id,
       },
     });
 
-    return NextResponse.json({ generatedCode }, { status: 201 });
+    // If the code is a winner, save the user in the Winner table
+    if (selectedCode.isWinner) {
+      await prisma.winner.create({
+        data: {
+          name: user.name,
+          surname: user.surname,
+          email: user.email,
+          winningCodeId: selectedCode.id,
+        },
+      });
+    }
+
+    return NextResponse.json({ assignedCode: selectedCode.generatedCode }, { status: 201 });
   } catch (error) {
     console.error("Error registering user:", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });

@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// schema.prisma
 
 generator client {
   provider = "prisma-client-js"
@@ -14,14 +10,13 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(cuid())
-  name     String?
-  surname  String?
-  email    String  @unique
-  isVerified        Boolean @default(false)
-  verificationToken String? @unique
-
-  genCodes UserGenCode[]
+  id             String          @id @default(cuid())
+  name           String
+  surname        String
+  email          String          @unique
+  isVerified     Boolean         @default(false)
+  verificationToken String?      @unique
+  genCodes       UserGenCode[]
 }
 
 model GenCode {
@@ -29,8 +24,11 @@ model GenCode {
   generatedCode Int     @unique
   createdAt   DateTime @default(now())
   expiresAt   DateTime @default(dbgenerated("(NOW() + INTERVAL '1 DAY')"))
+  isWinner      Boolean  @default(false)
+  isAssigned  Boolean  @default(false)
 
   linkedUsers UserGenCode[]
+  Winner Winner[]
 }
 
 model UserGenCode {
@@ -40,4 +38,14 @@ model UserGenCode {
 
   user   User   @relation(fields: [userEmail], references: [email])
   gencode GenCode @relation(fields: [genCodeId], references: [id])
+}
+
+model Winner {
+  id           String   @id @default(cuid())
+  name         String
+  surname      String
+  email        String   @unique
+  winningCode  GenCode @relation(fields: [winningCodeId], references: [id])
+  winningCodeId String  // Foreign key to GenCode
+  wonAt        DateTime @default(now())
 }
