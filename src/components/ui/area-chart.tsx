@@ -1,66 +1,108 @@
 // src/components/ui/area-chart.tsx
 
 "use client";
-
-import { TrendingUp } from "lucide-react";
-// Alias the recharts AreaChart to avoid conflict with local AreaChart component
-import { Area, AreaChart as RechartsAreaChart, CartesianGrid, XAxis } from "recharts";
+import { useState } from "react";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+} from "@/components/ui/pagination";
 import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+  Area,
+  AreaChart as RechartsAreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 
-// Define the types for the incoming props
+import { subDays, startOfMonth, format, addYears, addDays } from "date-fns";
+
 interface AreaChartProps {
-  data: { [key: string]: any }[]; // Data in dynamic format, allowing any structure
-  xKey: string; // Key for the x-axis (e.g., "date" or "month")
-  yKeys: { key: string; label: string; color: string }[]; // Dynamic yKeys with label and color
+  data: { [key: string]: any }[]; // Dynamic structure of data
+  xKey: string; // X-Axis key
+  yKeys: { key: string; label: string; color: string }[]; // Y-Axis key, label, and color
+  filter: string; // The filter type to adapt the graph (hourly, daily, monthly)
 }
 
-export function AreaChart({ data, xKey, yKeys }: AreaChartProps) {
+export function AreaChart({ data, xKey, yKeys, filter }: AreaChartProps) {
+  const [currentPage, setCurrentPage] = useState(new Date());
+
+  const generateXAxisLabels = () => {
+    if (filter === "hourly") {
+      return Array.from({ length: 24 }, (_, i) => `${i}:00`);
+    } else if (filter === "daily") {
+      return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    } else if (filter === "monthly") {
+      return Array.from({ length: 12 }, (_, i) =>
+        new Date(0, i).toLocaleString("default", { month: "long" })
+      );
+    }
+    return [];
+  };
+
+  const xAxisLabels = generateXAxisLabels();
+  const filledData = xAxisLabels.map((label) => {
+    const existingData = data.find((d) => d[xKey] === label);
+    return (
+      existingData || { [xKey]: label, totalUsers: 0, verifiedUsers: 0, winners: 0, losers: 0 }
+    );
+  });
+
+  const formatLabel = () => {
+    if (filter === "hourly") {
+      return format(currentPage, "yyyy-MM-dd");
+    } else if (filter === "daily") {
+      const weekOfMonth = Math.ceil(currentPage.getDate() / 7);
+      return `${format(currentPage, "MMMM")} - Week ${weekOfMonth}`;
+    } else if (filter === "monthly") {
+      return format(currentPage, "yyyy");
+    }
+    return "";
+  };
+
+  const handlePrevious = () => {
+    if (filter === "hourly") {
+      setCurrentPage((prev) => subDays(prev, 1));
+    } else if (filter === "daily") {
+      setCurrentPage((prev) => subDays(prev, 7));
+    } else if (filter === "monthly") {
+      setCurrentPage((prev) => addYears(prev, -1));
+    }
+  };
+
+  const handleNext = () => {
+    if (filter === "hourly") {
+      setCurrentPage((prev) => addDays(prev, 1));
+    } else if (filter === "daily") {
+      setCurrentPage((prev) => addDays(prev, 7));
+    } else if (filter === "monthly") {
+      setCurrentPage((prev) => addYears(prev, 1));
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>User Growth Over Time</CardTitle>
         <CardDescription>Showing statistics over the selected period</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={{}} className="w-full h-[370px]">
-          <RechartsAreaChart
-            accessibilityLayer
-            data={data}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
+        <ResponsiveContainer width="100%" height={370}>
+          <RechartsAreaChart data={filledData} margin={{ left: 12, right: 12 }}>
             <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey={xKey} // Use dynamic xKey
-              tickLine={true}
-              axisLine={true}
-              tickMargin={4}
-              tickFormatter={(value) => value.slice(0, 3)} // Format the tick labels if needed
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dot" hideLabel />}
-            />
+            <XAxis dataKey={xKey} tickMargin={4} />
+            <YAxis />
+            <Tooltip />
             {yKeys.map((yKey) => (
               <Area
                 key={yKey.key}
                 dataKey={yKey.key}
-                type="linear"
+                type="monotone"
                 fill={yKey.color}
                 fillOpacity={0}
                 stroke={yKey.color}
@@ -68,20 +110,30 @@ export function AreaChart({ data, xKey, yKeys }: AreaChartProps) {
               />
             ))}
           </RechartsAreaChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              January - June 2024
-            </div>
+        </ResponsiveContainer>
+        <Pagination className="mt-4">
+          <div className="w-full flex items-center justify-between">
+            {/* Previous Button: Aligns at the start */}
+            <PaginationPrevious
+              className="bg-blue-400 hover:bg-blue-200 cursor-pointer"
+              onClick={handlePrevious}
+            />
+            
+            {/* Pagination Content: Centered Label */}
+            <PaginationContent className="flex justify-center flex-grow">
+              <PaginationItem>
+                <PaginationLink className="p-3 w-auto" isActive>{formatLabel()}</PaginationLink>
+              </PaginationItem>
+            </PaginationContent>
+            
+            {/* Next Button: Aligns at the end */}
+            <PaginationNext
+              className="bg-blue-400 hover:bg-blue-200 cursor-pointer"
+              onClick={handleNext}
+            />
           </div>
-        </div>
-      </CardFooter>
+        </Pagination>
+      </CardContent>
     </Card>
   );
 }

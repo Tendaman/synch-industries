@@ -13,6 +13,7 @@ const requestBodySchema = z.object({
   expirationDate: z.string().optional(),
 });
 
+// ** POST - Generate Codes **
 export async function POST(req: Request) {
   try {
     const requestBody = await req.json();
@@ -98,3 +99,49 @@ export async function POST(req: Request) {
   }
 }
 
+// ** GET - Fetch Codes with Filtering **
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const filter = searchParams.get("filter") || "all"; // Default: all codes
+
+    let whereClause = {};
+    if (filter === "winning") whereClause = { isWinner: true };
+    else if (filter === "losing") whereClause = { isWinner: false };
+    else if (filter === "assigned") whereClause = { isAssigned: true };
+    else if (filter === "unassigned") whereClause = { isAssigned: false };
+
+    const codes = await prisma.genCode.findMany({
+      where: whereClause,
+      select: { 
+        id: true, 
+        generatedCode: true, 
+        isWinner: true, 
+        expiresAt: true, 
+        isAssigned: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(codes, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching generated codes:", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+  }
+}
+
+// ** DELETE - Remove Expired Codes **
+export async function DELETE() {
+  try {
+    const now = new Date();
+    await prisma.genCode.deleteMany({
+      where: {
+        expiresAt: { lte: now }, // Delete codes where expiration date has passed
+      },
+    });
+
+    return NextResponse.json({ message: "Expired codes deleted successfully." }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting expired codes:", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+  }
+}

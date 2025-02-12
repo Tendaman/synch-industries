@@ -35,12 +35,16 @@ const transporter = nodemailer.createTransport({
   const mailOptions = {
     from: "tendamadavha@gmail.com",  // Sender address
     to: email, // Receiver email address
-    subject: "Please Verify Your Email Address",
+    subject: "Africa Energy Indaba Prize giveaway",
     html: `
-      <p>Hi,</p>
+      <h1>Hi there,</h1>
+      <p>thank for registering for the giveaway</p>
       <p>Please verify your email by clicking the link below:</p>
       <a href="${verificationUrl}">Verify Email</a>
-      <p>This link will expire in 24 hours.</p>
+      <p>You will find your designated code to see if you win</p>
+      <p>Incase you close the tab, you may click the link again to rertrieve your code</p>
+      <p>Thank you for participating in the giveaway</p>
+      <p>Best regards, Africa Energy Indaba/ Synch Industries</p>
     `
   };
 

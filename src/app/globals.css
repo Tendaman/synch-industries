@@ -64,9 +64,47 @@ body {
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border !scroll-smooth;
   }
   body {
     @apply bg-background text-foreground;
+  }
+  button {
+      @apply active:outline-none;
+  }
+}
+
+@layer utilities {
+  .heading {
+      @apply font-bold text-4xl md:text-5xl text-center;
+  }
+
+  .subheading{
+      @apply font-semibold text-xl text-center text-blue-100
+  }
+
+  .black-gradient {
+      background: linear-gradient(90deg, #161a31 0%, #06091f 100%);
+  }
+
+  .grid-container {
+      @apply w-full h-full border border-black-300 bg-blue-200 rounded-lg sm:p-7 p-4 flex flex-col gap-5;
+  }
+
+  .grid-headtext {
+      @apply text-xl font-semibold mb-2 text-white text-black;
+  }
+
+  .grid-subtext {
+      @apply text-[#afb0b6] text-base font-generalsans;
+  }
+}
+
+@layer base {
+* {
+  @apply border-border;
+  }
+body {
+  @apply bg-background text-foreground;
   }
 }

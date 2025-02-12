@@ -49,3 +49,10 @@ model Winner {
   winningCodeId String  // Foreign key to GenCode
   wonAt        DateTime @default(now())
 }
+
+model History {
+  id        Int      @id @default(autoincrement())
+  model     String   // Store the name of the table the data is copied from
+  data      Json     // Store the actual data as JSON
+  createdAt DateTime @default(now())
+}

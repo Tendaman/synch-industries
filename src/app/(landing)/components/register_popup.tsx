@@ -51,7 +51,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ isOpen, onClose }) => {
       }
 
       if (response.ok) {
-        setMessage("Verification email sent. Please check your email.");
+        setMessage("Verification email sent. Please check your email. If not there please check spam.");
       } else {
         setMessage(data.message || "Registration failed. Try again.");
       }
@@ -69,9 +69,9 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ isOpen, onClose }) => {
           <h2 className="text-xl font-bold mb-4">Register</h2>
 
           {message && (
-            <div className="bg-blue-100 text-blue-700 p-3 rounded-md mb-4">
+            <div className="flex flex-col bg-gray-100 text-blue-700 p-3 rounded-md mb-4">
               {message}
-              <Button variant="outline" onClick={() => setMessage(null)}>Close</Button>
+              <Button className="text-black mt-3" variant="outline" onClick={() => setMessage(null)}>Close</Button>
             </div>
           )}
 
