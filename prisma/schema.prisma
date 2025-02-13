@@ -7,6 +7,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
@@ -38,6 +39,8 @@ model UserGenCode {
 
   user   User   @relation(fields: [userEmail], references: [email])
   gencode GenCode @relation(fields: [genCodeId], references: [id])
+
+  @@index([genCodeId])
 }
 
 model Winner {
@@ -48,6 +51,8 @@ model Winner {
   winningCode  GenCode @relation(fields: [winningCodeId], references: [id])
   winningCodeId String  // Foreign key to GenCode
   wonAt        DateTime @default(now())
+
+  @@index([winningCodeId])
 }
 
 model History {

@@ -1,7 +1,7 @@
 // src/components/ui/area-chart.tsx
 
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -32,6 +32,20 @@ interface AreaChartProps {
 
 export function AreaChart({ data, xKey, yKeys, filter }: AreaChartProps) {
   const [currentPage, setCurrentPage] = useState(new Date());
+
+  const [chartData, setChartData] = useState<{ [key: string]: any }[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const formattedDate = format(currentPage, "yyyy-MM-dd");
+      const queryParam = `?filter=${filter}&date=${formattedDate}`;
+      const response = await fetch(`/api/admin/analytics${queryParam}`);
+      const result = await response.json();
+      setChartData(result.userTrends || []);
+    }
+
+    fetchData();
+  }, [currentPage, filter]);
 
   const generateXAxisLabels = () => {
     if (filter === "hourly") {
