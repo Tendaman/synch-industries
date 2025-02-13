@@ -15,9 +15,11 @@ export default function GenCodePage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (email) {
+    const paramEmail = searchParams.get("email");
+    setEmail(paramEmail);
+    if (paramEmail) {
       // Fetch assigned code from your backend
-      fetch(`/api/gencode?email=${email}`)
+      fetch(`/api/gencode?email=${paramEmail}`)
         .then((response) => response.json())
         .then((data) => {
           if (data.assignedCode) {
@@ -35,7 +37,7 @@ export default function GenCodePage() {
       setError("No email provided in the URL.");
       setLoading(false);
     }
-  }, [email]);
+  }, [searchParams]);
 
   const boothNumber = 3;
 
