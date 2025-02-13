@@ -8,18 +8,17 @@ import { useEffect, useState } from "react";
 
 export default function GenCodePage() {
   const searchParams = useSearchParams();
-  const email = searchParams.get("email"); // Fetch email from the query parameter
   const [assignedCode, setAssignedCode] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const paramEmail = searchParams.get("email");
-    setEmail(paramEmail);
-    if (paramEmail) {
+    
+  const email = searchParams.get("email"); // Fetch email from the query parameter
+    if (email) {
       // Fetch assigned code from your backend
-      fetch(`/api/gencode?email=${paramEmail}`)
+      fetch(`/api/gencode?email=${email}`)
         .then((response) => response.json())
         .then((data) => {
           if (data.assignedCode) {
@@ -37,7 +36,7 @@ export default function GenCodePage() {
       setError("No email provided in the URL.");
       setLoading(false);
     }
-  }, [searchParams]);
+  }, [email]);
 
   const boothNumber = 3;
 
