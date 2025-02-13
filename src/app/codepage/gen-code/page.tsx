@@ -7,15 +7,14 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function GenCodePage() {
-  const searchParams = useSearchParams();
   const [assignedCode, setAssignedCode] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    
-  const email = searchParams.get("email"); // Fetch email from the query parameter
+    const searchParams = useSearchParams();
+    const email = searchParams.get("email"); // Fetch email from the query parameter
     if (email) {
       // Fetch assigned code from your backend
       fetch(`/api/gencode?email=${email}`)
