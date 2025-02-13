@@ -5,11 +5,11 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 
 function GenCodeContent() {
+  const searchParams = useSearchParams();
   const email = searchParams.get("email"); // Fetch email from the query parameter
   const [assignedCode, setAssignedCode] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const searchParams = useSearchParams();
   const router = useRouter();
 
   useEffect(() => {
