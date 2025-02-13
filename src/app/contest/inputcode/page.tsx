@@ -2,11 +2,11 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
-const Inputcode = () => {
+function InputCodeContent() {
     const searchParams = useSearchParams();
     const [otp, setOtp] = useState("");
     const [message, setMessage] = useState<string | null>(null);
@@ -14,7 +14,7 @@ const Inputcode = () => {
 
     const handleOtpChange = (value: string) => {
         setOtp(value.trim());
-        setMessage(null); // Clear message when user types a new code
+        setMessage(null);
     };
 
     const handleSubmit = async () => {
@@ -50,7 +50,6 @@ const Inputcode = () => {
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 p-6">
-            {/* Logos */}
             <div className="flex justify-center items-center gap-x-10 mt-5 h-[50px] w-full max-w-screen-lg pb-20">
                 <a href="https://synchindustries.com" target="_blank" rel="noopener noreferrer">
                     <img src="/logo1.svg" alt="Logo 1" className="h-20 w-auto"/>
@@ -60,7 +59,6 @@ const Inputcode = () => {
                 </a>
             </div>
 
-            {/* Display Result Message */}
             {message && (
                 <div
                     className={`p-6 rounded-lg shadow-lg text-center max-w-md mb-6 ${
@@ -77,7 +75,6 @@ const Inputcode = () => {
                 </div>
             )}
 
-            {/* OTP Input Fields */}
             <h1 className="text-3xl sm:text-lg font-bold text-gray-700 mb-6 text-center">
                 Enter Your Contest Code
             </h1>
@@ -90,7 +87,6 @@ const Inputcode = () => {
                 </InputOTPGroup>
             </InputOTP>
 
-            {/* Submit Button */}
             <button
                 onClick={handleSubmit}
                 disabled={otp.length < 4}
@@ -102,6 +98,12 @@ const Inputcode = () => {
             </button>
         </div>
     );
-};
+}
 
-export default Inputcode;
+export default function Inputcode() {
+    return (
+        <Suspense fallback={<p className="text-center mt-10 text-gray-500">Loading...</p>}>
+            <InputCodeContent />
+        </Suspense>
+    );
+}
