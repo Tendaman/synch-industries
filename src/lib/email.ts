@@ -33,7 +33,7 @@ const transporter = nodemailer.createTransport({
 
   // Set up the email options
   const mailOptions = {
-    from: "tendamadavha@gmail.com",  // Sender address
+    from: "events@synchindustries.com",  // Sender address
     to: email, // Receiver email address
     subject: "Africa Energy Indaba Prize giveaway",
     html: `
