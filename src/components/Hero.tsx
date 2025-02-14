@@ -14,28 +14,23 @@ const Hero = () => {
                 <div className="max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center">
 
                     {/* Logos & Stall Location */}
-                    <div className="flex items-center gap-6 mt-5 h-[50px] w-full">
-                        {/* First Logo - Links to Synch Industries */}
-                        <span className="flex-1 flex justify-end">
-                            <a href="https://synchindustries.com" target="_blank" rel="noopener noreferrer">
-                                <img src="/logo1.svg" alt="Synch Industries Logo" className="h-20 w-auto mb-4"/>
-                            </a>
-                        </span>
+                    {/* Synch Industries Logo (Bigger & On Top) */}
+                    <a href="https://synchindustries.com" target="_blank" rel="noopener noreferrer">
+                        <img src="/logo1.svg" alt="Synch Industries Logo" className="h-24 w-auto mb-4"/>
+                    </a>
 
-                        {/* Second Logo - Links to Africa Energy Indaba */}
-                        <span className="flex-1 flex justify-start">
-                            <a href="https://africaenergyindaba.com/" target="_blank" rel="noopener noreferrer">
-                                 <img src="/logo2.svg" alt="Logo 2" className="h-16 w-auto"/>
-                            </a>
-                        </span>
-                    </div>
-                        {/* Stall Location Display */}
-                        <div className="flex justify-center mt-8">
-                            <div
-                                className="px-4 py-2 border-2 border-black text-black text-sm md:text-lg font-semibold text-center w-full">
-                                Hall 3, Booth #45
-                            </div>
+                    <div className="flex items-center border-2 border-black pr-1 py-2 rounded-lg">
+                        {/* Second Logo (Left-Aligned with No Left Padding) */}
+                        <a href="https://africaenergyindaba.com/" target="_blank" rel="noopener noreferrer"
+                           className="px-0 mx-0">
+                            <img src="/logo2.svg" alt="Africa Energy Indaba Logo" className="h-12 w-auto"/>
+                        </a>
+
+                        {/* Stall Location (Right-Aligned) */}
+                        <div className="text-black text-sm md:text-lg font-semibold text-left pl-4">
+                            Hall 3, Booth #45
                         </div>
+                    </div>
 
                     {/* Hero Heading with Animated Text Effect */}
                     <TextGenerateEffect
