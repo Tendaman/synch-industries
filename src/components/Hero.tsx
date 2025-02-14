@@ -8,7 +8,7 @@ const Hero = () => {
     
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     return (
-        <div className="pb-20 pt-36 " id={'home'}>
+        <div className="pb-20 pt-15 " id={'home'}>
 
             <div className="flex justify-center relative z-10 ">
                 <div className="max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center">
@@ -18,17 +18,9 @@ const Hero = () => {
                         {/* First Logo - Links to Synch Industries */}
                         <span className="flex-1 flex justify-end">
                             <a href="https://synchindustries.com" target="_blank" rel="noopener noreferrer">
-                                <img src="/logo1.svg" alt="Logo 1" className="h-20 w-auto"/>
+                                <img src="/logo1.svg" alt="Synch Industries Logo" className="h-20 w-auto mb-4"/>
                             </a>
                         </span>
-
-                        {/* Stall Location Display */}
-                        <div className="flex-1 flex justify-center">
-                            <div
-                                className="px-4 py-2 border-2 border-black text-black text-sm md:text-lg font-semibold text-center">
-                                Hall 3, Booth #45
-                            </div>
-                        </div>
 
                         {/* Second Logo - Links to Africa Energy Indaba */}
                         <span className="flex-1 flex justify-start">
@@ -37,6 +29,13 @@ const Hero = () => {
                             </a>
                         </span>
                     </div>
+                        {/* Stall Location Display */}
+                        <div className="flex justify-center mt-8">
+                            <div
+                                className="px-4 py-2 border-2 border-black text-black text-sm md:text-lg font-semibold text-center w-full">
+                                Hall 3, Booth #45
+                            </div>
+                        </div>
 
                     {/* Hero Heading with Animated Text Effect */}
                     <TextGenerateEffect
