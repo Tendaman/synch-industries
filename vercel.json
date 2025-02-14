@@ -1,0 +1,13 @@
+{
+    "crons": [
+      {
+        "path": "/api/cron/sync-history",
+        "schedule": "*/1 * * * *" 
+      },
+      {
+        "path": "/api/cron/delete-code",
+        "schedule": "*/15 * * * *"
+      }
+    ]
+  }
+  
