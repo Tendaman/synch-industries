@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface RegisterPopupProps {
   isOpen: boolean;
@@ -19,6 +20,8 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({ name: "", surname: "", email: "" });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState(false);
 
   const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
   const ADMIN_NAME = process.env.NEXT_PUBLIC_ADMIN_NAME;
@@ -32,8 +35,15 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setMessage("");
+    setConsentError(false);
+
+    if (!consent) {
+      setConsentError(true);
+      return;
+    }
+
+    setLoading(true);
 
     // Check for the specific email and name/surname combination
     if (
@@ -102,6 +112,12 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ isOpen, onClose }) => {
               <Label htmlFor="email">Email</Label>
               <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} required />
             </div>
+            {/* Consent Checkbox */}
+            <div className="flex gap-2">
+              <Label htmlFor="consent">I consent to the data I provide being used.</Label>
+              <Checkbox id="consent" checked={consent} onCheckedChange={(checked) => setConsent(!!checked)} />
+            </div>
+            {consentError && <p className="text-red-500 text-sm">You must check the box to proceed.</p>}
             <div className="flex justify-between mt-4">
               <Button type="submit" disabled={loading}>{loading ? "Registering..." : "Submit"}</Button>
               <Button variant="outline" onClick={onClose}>Cancel</Button>
