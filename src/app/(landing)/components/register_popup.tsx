@@ -20,6 +20,10 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
+  const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const ADMIN_NAME = process.env.NEXT_PUBLIC_ADMIN_NAME;
+  const ADMIN_SURNAME = process.env.NEXT_PUBLIC_ADMIN_SURNAME;
+
   if (!isOpen) return null;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +34,16 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ isOpen, onClose }) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
+
+    // Check for the specific email and name/surname combination
+    if (
+      formData.email === ADMIN_EMAIL &&
+      formData.name === ADMIN_NAME &&
+      formData.surname === ADMIN_SURNAME
+    ) {
+      router.push("/admin/Dashboard"); // Redirect to Admin Dashboard
+      return;
+    }
 
     try {
       const response = await fetch("/api/register", {
