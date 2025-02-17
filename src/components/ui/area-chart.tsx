@@ -76,7 +76,17 @@ export function AreaChart({ data, xKey, yKeys, filter, currentDate }: AreaChartP
             ))}
           </RechartsAreaChart>
         </ResponsiveContainer>
-        
+        <Pagination className="mt-4">
+          <div className="w-full flex items-center justify-between">
+            <PaginationContent className="flex justify-center flex-grow">
+              <PaginationItem>
+                <PaginationLink className="p-3 w-[300px]" isActive>
+                  {formatLabel()}
+                </PaginationLink>
+              </PaginationItem>
+            </PaginationContent>
+          </div>
+        </Pagination>
       </CardContent>
     </Card>
   );
