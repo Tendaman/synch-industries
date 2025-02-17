@@ -4,14 +4,14 @@ import cron from "node-cron";
 const prisma = new PrismaClient();
 let isJobRunning = false; // Prevents duplicate execution
 
-cron.schedule("*/1 * * * *", async () => {
+cron.schedule("*/2 * * * *", async () => {
   if (isJobRunning) {
     console.log("Job is already running. Skipping duplicate execution.");
     return;
   }
 
   isJobRunning = true;
-  console.log("Running job: Syncing data into History table...");
+  console.log("Running job: Syncing data into History table and deleting expired codes...");
 
   try {
     // Step 1: Fetch all data from relevant tables
@@ -61,12 +61,9 @@ cron.schedule("*/1 * * * *", async () => {
 
     console.log("Data sync to History table completed.");
 
-    // Fetch all records from History
+    // Step 4: Fetch and remove duplicate history records
     const allHistoryRecords = await prisma.history.findMany();
-
-    console.log(`Fetched ${allHistoryRecords.length} records from the History table.`);
-
-    const recordsMap = new Map(); // Stores the latest records by JSON data
+    const recordsMap = new Map();
     const duplicatesToDelete: number[] = [];
 
     for (const record of allHistoryRecords) {
@@ -74,42 +71,55 @@ cron.schedule("*/1 * * * *", async () => {
       const existing = recordsMap.get(dataString);
 
       if (existing) {
-        // Keep the most recent record, mark the other for deletion
         if (new Date(record.createdAt) > new Date(existing.createdAt)) {
-          duplicatesToDelete.push(existing.id); // Older record to delete
-          recordsMap.set(dataString, record); // Update map with the latest record
+          duplicatesToDelete.push(existing.id);
+          recordsMap.set(dataString, record);
         } else {
-          duplicatesToDelete.push(record.id); // Current record is older, mark for deletion
+          duplicatesToDelete.push(record.id);
         }
       } else {
         recordsMap.set(dataString, record);
       }
     }
 
-    // Step 3: Delete duplicates (if any)
     for (const idToDelete of duplicatesToDelete) {
-      try {
-        // Check if the record still exists before attempting deletion
-        const recordExists = await prisma.history.findUnique({
-          where: { id: idToDelete },
-        });
-
-        if (recordExists) {
-          await prisma.history.delete({
-            where: { id: idToDelete },
-          });
-          console.log(`Deleted duplicate record with ID ${idToDelete}.`);
-        } else {
-          console.log(`Record with ID ${idToDelete} no longer exists. Skipping deletion.`);
-        }
-      } catch (error) {
-        console.error(`Error deleting record with ID ${idToDelete}:`, error);
+      const recordExists = await prisma.history.findUnique({ where: { id: idToDelete } });
+      if (recordExists) {
+        await prisma.history.delete({ where: { id: idToDelete } });
+        console.log(`Deleted duplicate history record with ID ${idToDelete}.`);
+      } else {
+        console.log(`Record with ID ${idToDelete} no longer exists. Skipping deletion.`);
       }
     }
+
+    // Step 5: Delete expired codes
+    const now = new Date();
+    const expiredCodes = await prisma.genCode.findMany({
+      where: { expiresAt: { lte: now } },
+      select: { id: true },
+    });
+
+    if (expiredCodes.length > 0) {
+      await prisma.genCode.updateMany({
+        where: { id: { in: expiredCodes.map(code => code.id) } },
+        data: { isAssigned: false },
+      });
+      await prisma.userGenCode.deleteMany({
+        where: { genCodeId: { in: expiredCodes.map(code => code.id) } },
+      });
+      await prisma.winner.deleteMany({
+        where: { winningCodeId: { in: expiredCodes.map(code => code.id) } },
+      });
+      await prisma.genCode.deleteMany({
+        where: { id: { in: expiredCodes.map(code => code.id) } },
+      });
+
+      console.log(`Deleted ${expiredCodes.length} expired codes.`);
+    }
   } catch (error) {
-    console.error("Error syncing data into History table:", error);
+    console.error("Error in cron job:", error);
   } finally {
     await prisma.$disconnect();
-    isJobRunning = false; // Allow next execution
+    isJobRunning = false;
   }
 });

@@ -2,38 +2,35 @@
 
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { subDays, startOfMonth, format, startOfDay } from "date-fns";
+import { subDays, startOfMonth, format, startOfDay, parseISO } from "date-fns";
 
 const prisma = new PrismaClient();
-
-interface HistoryData {
-  isVerified?: boolean;
-  isWinner?: boolean;
-}
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const filter = searchParams.get("filter") || "hourly"; // Default to 'hourly'
+    const dateParam = searchParams.get("date"); // Get date from query params
+    const now = dateParam ? parseISO(dateParam) : new Date();
 
     let dateFilter = {};
-    const now = new Date();
-
     if (filter === "hourly") {
-      dateFilter = { createdAt: { gte: subDays(now, 1) } }; // Last 24 hours
+      dateFilter = { createdAt: { gte: startOfDay(now), lt: subDays(startOfDay(now), -1) } }; // Last 24 hours
     } else if (filter === "daily") {
-      dateFilter = { createdAt: { gte: subDays(now, 7) } }; // Last 7 days
+      dateFilter = { createdAt: { gte: subDays(now, 168) } }; // Last 7 days
     } else if (filter === "monthly") {
-      dateFilter = { createdAt: { gte: startOfMonth(now) } }; // From start of this month
+      dateFilter = { createdAt: { gte: new Date(now.getFullYear(), now.getMonth(), 1) } }; // From start of this month
     }
 
     // Fetch aggregated stats for pie chart
     const [totalUsers, verifiedUsers, totalCodes, totalWinningCodes] = await Promise.all([
-      prisma.history.count({ where: { model: "User", ...dateFilter } }),
-      prisma.history.count({ where: { model: "User", data: { path: ["isVerified"], equals: true }, ...dateFilter } }),
-      prisma.history.count({ where: { model: "GenCode", ...dateFilter } }),
-      prisma.history.count({ where: { model: "GenCode", data: { path: ["isWinner"], equals: true }, ...dateFilter } }),
+      prisma.user.count({ where: dateFilter }),
+      prisma.user.count({ where: { isVerified: true, ...dateFilter } }),
+      prisma.genCode.count({ where: dateFilter }),
+      prisma.genCode.count({ where: { isWinner: true, ...dateFilter } }),
     ]);
+
+    const totalLosingCodes = totalCodes - totalWinningCodes;
 
     const winnerCodes = await prisma.genCode.findMany({
       where: { isWinner: true, createdAt: { gte: startOfDay(now) } },
@@ -51,24 +48,10 @@ export async function GET(req: Request) {
     });
     
 
-    // Fetch records for time-based trends
-    const historyRecords = await prisma.history.findMany({
-      where: {
-        model: { in: ["User", "GenCode"] },
-        ...dateFilter,
-      },
-      select: {
-        createdAt: true,
-        model: true,
-        data: true,
-      },
-    });
-
     // Initialize trends map with default values
     let trendsMap = new Map();
-
     if (filter === "hourly") {
-      for (let i = 0; i < 24; i += 4) {
+      for (let i = 0; i < 24; i++) {
         const label = `${i}:00`;
         trendsMap.set(label, { date: label, totalUsers: 0, verifiedUsers: 0, winners: 0, losers: 0 });
       }
@@ -84,13 +67,22 @@ export async function GET(req: Request) {
       }
     }
 
-    // Process history records and update trends map
-    historyRecords.forEach(record => {
-      let formattedDate = "";
-      const data = record.data as HistoryData | null;
+    const userRecords = await prisma.user.findMany({
+      where: dateFilter,
+      select: { createdAt: true, isVerified: true },
+    });
 
+    // Fetching code trends
+    const codeRecords = await prisma.genCode.findMany({
+      where: dateFilter,
+      select: { createdAt: true, isWinner: true },
+    });
+
+    // Process trends
+    userRecords.forEach(record => {
+      let formattedDate = "";
       if (filter === "hourly") {
-        formattedDate = `${new Date(record.createdAt).getHours()}:00`;
+        formattedDate = format(record.createdAt, "H:00");
       } else if (filter === "daily") {
         formattedDate = format(record.createdAt, "EEE");
       } else if (filter === "monthly") {
@@ -99,22 +91,32 @@ export async function GET(req: Request) {
 
       if (trendsMap.has(formattedDate)) {
         const trendData = trendsMap.get(formattedDate);
-        if (record.model === "User") {
-          trendData.totalUsers++;
-          if (data?.isVerified) trendData.verifiedUsers++;
-        } else if (record.model === "GenCode") {
-          if (data?.isWinner) trendData.winners++;
-          else trendData.losers++;
-        }
+        trendData.totalUsers++;
+        if (record.isVerified) trendData.verifiedUsers++;
         trendsMap.set(formattedDate, trendData);
       }
     });
 
-    const totalLosingCodes = totalCodes - totalWinningCodes;
+    codeRecords.forEach(record => {
+      let formattedDate = "";
+      if (filter === "hourly") {
+        formattedDate = format(record.createdAt, "H:00");
+      } else if (filter === "daily") {
+        formattedDate = format(record.createdAt, "EEE");
+      } else if (filter === "monthly") {
+        formattedDate = format(record.createdAt, "MMMM");
+      }
+
+      if (trendsMap.has(formattedDate)) {
+        const trendData = trendsMap.get(formattedDate);
+        if (record.isWinner) trendData.winners++;
+        else trendData.losers++;
+        trendsMap.set(formattedDate, trendData);
+      }
+    });
 
     return NextResponse.json(
       {
-        // Pie Chart Data
         totalUsers,
         verifiedUsers,
         totalCodes,
@@ -123,7 +125,6 @@ export async function GET(req: Request) {
         winnerCodes: winnerCodes.map(code => ({ code: code.generatedCode })),
         winnerUsers,
         hasData: totalUsers > 0 || totalCodes > 0,
-        // Area Chart Data
         userTrends: Array.from(trendsMap.values()),
       },
       { status: 200 }

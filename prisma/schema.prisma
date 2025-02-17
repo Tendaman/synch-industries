@@ -17,6 +17,8 @@ model User {
   email          String          @unique
   isVerified     Boolean         @default(false)
   verificationToken String?      @unique
+
+  createdAt      DateTime        @default(now())
   genCodes       UserGenCode[]
 }
 

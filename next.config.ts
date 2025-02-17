@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import "./src/lib/delExpCodes"; // Import the cleanup job
 import "./src/lib/dupDataToHistory"
 const nextConfig = {
   typescript: {

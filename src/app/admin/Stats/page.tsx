@@ -1,5 +1,3 @@
-//src\app\admin\Stats\page.tsx
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -110,26 +108,6 @@ export default function WinningPage() {
     ],
   };
 
-  // Formatting the data for area chart
-  const generateXAxisLabels = () => {
-    if (filter === "hourly") {
-      return Array.from({ length: 24 }, (_, i) => `${i}:00`);
-    } else if (filter === "daily") {
-      return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    } else if (filter === "monthly") {
-      return Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString("default", { month: "long" }));
-    }
-    return [];
-  };
-
-  const xAxisLabels = generateXAxisLabels();
-  const areaChartData = xAxisLabels.map(label => {
-    const existingData = stats.userTrends.find(trend => trend.date === label);
-    return existingData || { date: label, totalUsers: 0, verifiedUsers: 0, winners: 0, losers: 0 };
-  });
-
-  console.log("Formatted Area Chart Data:", areaChartData);
-
   return (
     <>
       <div className="flex">
@@ -156,29 +134,21 @@ export default function WinningPage() {
         <div className="w-full flex flex-col p-6">
           <div className="flex">
             <h2 className="text-2xl font-bold mb-4">User Growth Over Time</h2>
-            <div className="flex items-center space-x-4 mb-4 ml-4">
-              <Select onValueChange={(value: string) => setFilter(value)} defaultValue={filter}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select filter" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="hourly">Hourly</SelectItem>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            
           </div>
           <AreaChart
-            data={areaChartData}
-            xKey="date"
+            data={stats.userTrends}
+            xKey="date" // Assuming 'date' is the key in your `userTrends` data
             yKeys={[
-              { key: "totalUsers", label: "Total Users", color: "blue" },
-              { key: "verifiedUsers", label: "Verified Users", color: "green" },
-              { key: "winners", label: "Winners", color: "gold" },
-              { key: "losers", label: "Losers", color: "red" },
+              { key: 'totalUsers', label: 'Total Users', color: '#4CAF50' },
+              { key: 'verifiedUsers', label: 'Verified Users', color: '#36A2EB' },
+              { key: 'winners', label: 'Winners', color: '#FF3D67' },
+              { key: 'losers', label: 'Losers', color: '#FF9800' }
             ]}
-            filter={filter} />
+            filter={filter}
+            currentDate={currentDate}
+            setCurrentDate={setCurrentDate}
+          />
         </div>
       </div>
       <div>
