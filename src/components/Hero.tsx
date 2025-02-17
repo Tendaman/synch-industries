@@ -13,7 +13,6 @@ const Hero = () => {
             <div className="flex justify-center relative z-10 ">
                 <div className="max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center">
 
-                    {/* Logos & Stall Location */}
                     {/* Synch Industries Logo (Bigger & On Top) */}
                     <a href="https://synchindustries.com" target="_blank" rel="noopener noreferrer">
                         <img src="/logo1.svg" alt="Synch Industries Logo" className="h-24 w-auto mb-4"/>
