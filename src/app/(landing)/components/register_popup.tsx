@@ -113,7 +113,7 @@ const RegisterPopup: React.FC<RegisterPopupProps> = ({ isOpen, onClose }) => {
               <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} required />
             </div>
             {/* Consent Checkbox */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 mt-2">
               <Label htmlFor="consent">I consent to the data I provide being used.</Label>
               <Checkbox id="consent" checked={consent} onCheckedChange={(checked) => setConsent(!!checked)} />
             </div>

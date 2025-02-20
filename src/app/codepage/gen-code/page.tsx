@@ -34,20 +34,20 @@ function GenCodeContent() {
     }
   }, [searchParams]);
 
-  const boothNumber = 3;
+  const boothNumber = 12;
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 px-6 md:px-12">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-semibold text-gray-700 mb-4">Your Contest Code</h1>
         <p className="text-lg text-gray-600 mb-4">
-          You’re one step away from winning exciting prizes! Follow these steps carefully:
+          You're one step away from winning exciting prizes! Follow these steps carefully:
         </p>
 
         <div className="text-left space-y-4">
           <div><strong className="text-blue-600">Step 1:</strong> Visit <span className="font-semibold text-blue-600">Booth #{boothNumber}</span>.</div>
           <div><strong className="text-blue-600">Step 2:</strong> Show this code to the booth staff.</div>
-          <div><strong className="text-blue-600">Step 3:</strong> Enter your code to see if you’ve won a prize!</div>
+          <div><strong className="text-blue-600">Step 3:</strong> Enter your code to see if you've won a prize!</div>
           <div><strong className="text-blue-600">Step 4:</strong> If you win, collect your prize right there at the booth!</div>
         </div>
       </div>
