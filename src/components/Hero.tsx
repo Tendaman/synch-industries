@@ -27,14 +27,14 @@ const Hero = () => {
 
                         {/* Stall Location (Right-Aligned) */}
                         <div className="text-black text-sm md:text-lg font-semibold text-left pl-4">
-                            Hall 3, Booth #45
+                            Hall 1, Booth #12
                         </div>
                     </div>
 
                     {/* Hero Heading with Animated Text Effect */}
                     <TextGenerateEffect
                         className="text-center text-[40px] md:text-5xl lg:text-6xl text-black mt-6"
-                        words="Win Big with Synch Industries!"
+                        words="Win Big with SYNCH INDUSTRIES"
                     />
 
                     {/* Subtitle encouraging users to register */}

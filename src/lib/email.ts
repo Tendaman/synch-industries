@@ -37,14 +37,15 @@ const transporter = nodemailer.createTransport({
     to: email, // Receiver email address
     subject: "Africa Energy Indaba Prize giveaway",
     html: `
-      <h1>Hi there,</h1>
-      <p>thank for registering for the giveaway</p>
+      <p>Thank you for registering for the SYNCH INDUSTRIES giveaway</p>
       <p>Please verify your email by clicking the link below:</p>
       <a href="${verificationUrl}">Verify Email</a>
-      <p>You will find your designated code to see if you win</p>
-      <p>Incase you close the tab, you may click the link again to rertrieve your code</p>
-      <p>Thank you for participating in the giveaway</p>
-      <p>Best regards, Africa Energy Indaba/ Synch Industries</p>
+      <p>In your inbox, you will find your unique code to see if you win.</p>
+      <p>Follow the instructions to claim your prize.</p>
+      <p>In case you close the tab, you may click the link again to retrieve your code.</p>
+      <p>Thank you for participating in the giveaway.</p>
+      <p>Best regards,</p>
+      <p>SYNCH INDUSTRIES</p>
     `
   };
 
