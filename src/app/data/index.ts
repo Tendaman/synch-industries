@@ -1,5 +1,5 @@
 export const imageItems = [
-    { imageUrl: "/placehold.jpg" },
-    { imageUrl: "/placehold.jpg" },
-    { imageUrl: "/placehold.jpg" },
+    { imageUrl: "/product_1.png" },
+    { imageUrl: "/product_2.png" },
+    { imageUrl: "/product_3.jpg" },
 ];

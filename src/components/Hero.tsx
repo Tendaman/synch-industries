@@ -38,7 +38,7 @@ const Hero = () => {
                     />
 
                     {/* Subtitle encouraging users to register */}
-                    <p className="text-center md:tracking-wider mb-7 text-sm md:text-lg lg:text-2xl text-blue-100">
+                    <p className="text-center md:tracking-wider mb-7 text-sm md:text-lg lg:text-2xl text-gray-600">
                         Register now for a chance to win exclusive prizes!
                     </p>
 

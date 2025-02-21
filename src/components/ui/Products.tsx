@@ -9,7 +9,7 @@ const Products = () => {
             {/* Main Heading - Highlighting the Giveaway */}
             <h1 className="heading">
                 Stand a chance to {''}
-                <span className="text-blue-100 pb-10">WIN</span>
+                <span className="text-black-100 pb-10">WIN</span>
             </h1>
 
             {/* Subheading - Encourages Participation */}

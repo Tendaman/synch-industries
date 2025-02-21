@@ -31,6 +31,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const linkedin = "https://www.linkedin.com/posts/synch-industries_we-are-synch-industries-keeping-humanity-activity-7297902271818788864-4-iE?utm_source=share&utm_medium=member_android&rcm=ACoAAAVZtgEBccnZvWasK7gH5PLxPdu744qFxgI"
+
   // Set up the email options
   const mailOptions = {
     from: "synchindustries@gmail.com",  // Sender address
@@ -40,10 +42,11 @@ const transporter = nodemailer.createTransport({
       <p>Thank you for registering for the SYNCH INDUSTRIES giveaway</p>
       <p>Please verify your email by clicking the link below:</p>
       <a href="${verificationUrl}">Verify Email</a>
-      <p>In your inbox, you will find your unique code to see if you win.</p>
+      <p>In your inbox, you will find your unique code to see if you've won.</p>
       <p>Follow the instructions to claim your prize.</p>
-      <p>In case you close the tab, you may click the link again to retrieve your code.</p>
+      <p>If you close the tab, you can click the link again to retrieve your code.</p>
       <p>Thank you for participating in the giveaway.</p>
+      <p>Stay in touch and follow us on <a href="${linkedin}">LinkedIn</a></p>
       <p>Best regards,</p>
       <p>SYNCH INDUSTRIES</p>
     `
