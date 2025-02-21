@@ -85,8 +85,8 @@ function InputCodeContent() {
                                 : "bg-yellow-100 text-yellow-700"}`}
                 >
                     <h1 className="text-2xl font-bold">{message}</h1>
-                    {messageType === "won" && <img src="/placehold.jpg" alt="Winner" className="w-40 h-40 mx-auto my-5" />}
-                    {messageType === "lost" && <img src="/logo2.svg" alt="Loser" className="w-40 h-40 mx-auto my-5" />}
+                    {messageType === "won"}
+                    {messageType === "lost"}
 
 
                 </div>
