@@ -18,7 +18,7 @@ const Hero = () => {
                         <img src="/logo1.svg" alt="Synch Industries Logo" className="h-24 w-auto mb-4"/>
                     </a>
 
-                    <div className="flex items-center border-2 border-black pr-1 py-2 rounded-lg">
+                    <div className="flex items-center border-2 border-black pr-1 py-2 rounded-lg gap-2">
                         {/* Second Logo (Left-Aligned with No Left Padding) */}
                         <a href="https://africaenergyindaba.com/" target="_blank" rel="noopener noreferrer"
                            className="px-0 mx-0">
