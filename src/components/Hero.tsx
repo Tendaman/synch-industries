@@ -27,7 +27,7 @@ const Hero = () => {
 
                         {/* Stall Location (Right-Aligned) */}
                         <div className="text-black text-sm md:text-lg font-semibold text-left pl-4">
-                            Hall 1, Booth #12
+                            Hall 1, B12
                         </div>
                     </div>
 
