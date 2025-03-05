@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import cron from "node-cron";
 
 const prisma = new PrismaClient();
-let isJobRunning = false; // Prevents duplicate execution
+let isJobRunning = false;
 
 cron.schedule("*/2 * * * *", async () => {
   if (isJobRunning) {
