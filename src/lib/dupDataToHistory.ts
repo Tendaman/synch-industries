@@ -4,7 +4,7 @@ import cron from "node-cron";
 const prisma = new PrismaClient();
 let isJobRunning = false;
 
-cron.schedule("*/2 * * * *", async () => {
+cron.schedule("*/30 * * * *", async () => {
   if (isJobRunning) {
     console.log("Job is already running. Skipping duplicate execution.");
     return;

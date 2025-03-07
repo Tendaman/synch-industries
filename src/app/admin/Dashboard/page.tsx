@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 import { useEffect, useState } from "react";
+import DownloadButton from "./components/download";
 
 export default function Dashboard() {
   const [users, setUsers] = useState([]);
@@ -28,12 +29,15 @@ export default function Dashboard() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-      <Card className="inline-block bg-gray-200 border-green-300">
-        <div className="flex">
-          <p className="m-2 text-lg">Total Registered Users: </p>
-          <p className="m-2 mr-3 text-lg">{totalUsers}</p>
-        </div>
-      </Card>
+      <div className="flex justify-between">
+        <Card className="inline-block bg-black text-white border border-purple-600">
+          <div className="flex">
+            <p className="m-2 text-lg">Total Registered Users: </p>
+            <p className="m-2 mr-3 text-lg">{totalUsers}</p>
+          </div>
+        </Card>
+        <DownloadButton />
+      </div>
 
       <Card className="mt-6 p4">
         <Table>
